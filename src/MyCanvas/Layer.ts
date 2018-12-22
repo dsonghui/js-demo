@@ -22,7 +22,6 @@ export default class Layer {
     }
 
     draw() {
-        console.log(this.shapes);
         this.shapes.forEach(shapw => shapw.setCtx(this.ctx) && shapw.draw());
     }
 }

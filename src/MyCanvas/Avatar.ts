@@ -26,7 +26,6 @@ export default class Avatar extends CanvasElementEntity {
     }
 
     draw() {
-        console.log('draw');
         if (!this.ctx) throw new Error('画布实例为空');
         this.ctx.beginPath();
         this.ctx.moveTo(this.x + this.r, this.y);

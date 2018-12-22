@@ -148,8 +148,10 @@ export default class FamilyMap {
     }
 
     buildUserAvatar() {
+        let _this = this;
         let bgStage = new Stage(this.config.r * 2, this.config.r * 2);
         let userAvatarLayer = new Layer(bgStage.getElement().getContext("2d"));
+        let lastOnAvatar = null;
         // 用户生成属性结构对象
         buildUserAvatar(this.RootUser);
 
@@ -168,6 +170,47 @@ export default class FamilyMap {
 
         userAvatarLayer.draw();
         this.wrap.appendChild(bgStage.getElement());
+        bgStage.getElement().addEventListener('mousemove', function (e) {
+            let mouseX = e.layerX;
+            let mouseY = e.layerY;
+            let OnAvatar: Avatar | null = null;
+            userAvatarLayer.shapes.forEach((shape: Avatar) => {
+                if (Math.sqrt(Math.pow(mouseX - shape.x, 2) + Math.pow(mouseY - shape.y, 2)) < 25) {
+                    OnAvatar = shape;
+                }
+            });
+
+            if (OnAvatar && lastOnAvatar !== OnAvatar) {
+                // 去掉上次的焦点头像;
+                if (lastOnAvatar) {
+                    userAvatarLayer.shapes.pop();
+                }
+                lastOnAvatar = OnAvatar;
+                // 添加焦点头像到最前
+                userAvatarLayer.push(new Avatar({
+                    x: OnAvatar.x,
+                    y: OnAvatar.y,
+                    r: 30,
+                    fillStyle: '#57DDFF',
+                    strokeStyle: '#2FB1E3'
+                }));
+                // 重新绘制头像
+                userAvatarLayer.ctx.clearRect(0, 0, _this.config.r * 2, _this.config.r * 2);
+                userAvatarLayer.draw();
+            }
+
+            if(!OnAvatar && lastOnAvatar){
+                // 去掉上次的焦点头像;
+                if (lastOnAvatar) {
+                    userAvatarLayer.shapes.pop();
+                }
+                lastOnAvatar = null;
+                // 重新绘制头像
+                userAvatarLayer.ctx.clearRect(0, 0, _this.config.r * 2, _this.config.r * 2);
+                userAvatarLayer.draw();
+            }
+
+        })
     }
 
 
