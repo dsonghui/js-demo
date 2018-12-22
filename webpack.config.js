@@ -5,6 +5,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
     mode: 'development',
     entry: "./src/index.ts",
+    resolve: {
+        extensions: ['.ts','.tsx', '.js', '.vue', '.json'],
+        alias: {
+            '@': path.resolve(__dirname, './src'),
+        }
+    },
     module: {
         rules: [
             {
@@ -66,5 +72,7 @@ module.exports = {
         compress: true,
         port: 9101
     },
-    plugins: [new HtmlWebpackPlugin(), new webpack.HotModuleReplacementPlugin()]
+    plugins: [new HtmlWebpackPlugin({
+        template: "./index.html"
+    }), new webpack.HotModuleReplacementPlugin()]
 };

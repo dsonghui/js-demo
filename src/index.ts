@@ -1,14 +1,7 @@
-async function fetchData(url) {
-    return new Promise(function (resolve, reject) {
-        setTimeout(() => {
-            resolve(url);
-        }, 4000)
-    })
-}
+import Store from "./Store";
+import FamilyMap from "@/family";
 
-function run() {
-    let a = fetchData('url');
-    console.log(a);
+window.onload = function () {
+    let fm = new FamilyMap(document.getElementById('app'), Store);
+    fm.build();
 }
-
-run();
