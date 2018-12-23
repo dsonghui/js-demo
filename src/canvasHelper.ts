@@ -24,11 +24,9 @@ export default class CanvasHelper {
     }
 
     static drawDashRound(ctx, x, y, radius, partNum = 20) {
-        let step = 2 / partNum;
-        for (let b = 0, e = step / 2; e <= 2; b += step, e += step) {
-            ctx.beginPath()
-            ctx.arc(x, y, radius, b * Math.PI, e * Math.PI);
-            ctx.stroke();
-        }
+        ctx.setLineDash([5, 2]);
+        ctx.lineDashOffset = partNum;
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        ctx.stroke();
     }
 }

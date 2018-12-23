@@ -90,7 +90,7 @@ export default class FamilyMap {
                 fillStyle: index === 0 ? '#57DDFF' : color.darken(0.02 * (this.config.layerNum - index - 1)).rgb().toString(),
                 strokeStyle: index === 0 ? '#2FB1E3' : '#D8D8D8'
             }));
-        })
+        });
 
         backgroupLayer.draw();
 
@@ -103,12 +103,19 @@ export default class FamilyMap {
         let userLinkLineLayer = new Layer(bgStage.getElement().getContext("2d"));
         // 用户生成属性结构对象
         this.RootUser = new FamilyMemberPosition(this.Users, null, 0, this.CenterXy.x, this.CenterXy.y);
-        this.__buildLayerLinkLine(userLinkLineLayer, this.RootUser, 0, 360)
+        this.__buildLayerLinkLine(userLinkLineLayer, this.RootUser, 0, 360);
         userLinkLineLayer.draw();
         this.wrap.appendChild(bgStage.getElement());
     }
 
-    // 根据父级和子级数量分配位置
+    /**
+     * 根据父级和子级数量分配位置
+     * @param canvasLayer 当前 CanvasLarer
+     * @param parentUser  父用户信息
+     * @param parentAngle 父级用户所处的角度 根用户为0
+     * @param maxAngle 父用户可占用的角度// 用于分配给子级用户
+     * @private
+     */
     __buildLayerLinkLine(canvasLayer, parentUser: FamilyMemberPosition, parentAngle, maxAngle) {
         if (!parentUser.subUser || parentUser.subUser.length === 0) return;
         let layerNum = parentUser.layer + 1;
@@ -117,16 +124,22 @@ export default class FamilyMap {
             isStroke: true,
             strokeStyle: layerNum === 1 ? '#fff' : '#D8D8D8'
         });
-        let userNumber = parentUser.subUser.length;
-        if (userNumber > 0) {
-            let stepAngle = maxAngle / userNumber;
+        // 子级用户数;
+        let subUserNumber = parentUser.subUser.length;
+        // 子用户的子用户分数 至少占2分 至多占4份;
+        let subUserSubUserNumber = 0;
+        if (subUserNumber > 0) {
+            parentUser.subUser.forEach(user => {
+                subUserSubUserNumber += getUsbUserPercent(user);
+            });
+            let stepAngle = maxAngle / subUserSubUserNumber;
+            let startAngle = parentAngle - (maxAngle / 2);
+            if (startAngle < 0) startAngle = 360 + startAngle;
             parentUser.subUser.forEach((user, index) => {
-                let startAngle = parentAngle - (maxAngle / 2) + (stepAngle / 2);
-                if (startAngle < 0) startAngle = 360 + startAngle;
-                let userAngle = startAngle + (stepAngle * index);
-                // console.log('startAngle:' + startAngle);
-                // console.log('userAngle:' + userAngle);
-                // console.log('stepAngle:' + stepAngle);
+                // 分配给此用户的角度
+                let hasAngle = getUsbUserPercent(user) * stepAngle;
+                // 用户所在的角度 在开始角度加上分配的角度中间
+                let userAngle = startAngle + (hasAngle / 2);
                 let p = CanvasHelper.getXyByAngleAndRadius(userAngle, layer.radius);
                 // console.log(p);
                 user.x = this.CenterXy.x + p.x;
@@ -141,9 +154,20 @@ export default class FamilyMap {
                         y: user.y,
                     }
                 });
-                this.__buildLayerLinkLine(canvasLayer, user, userAngle, stepAngle);
+                this.__buildLayerLinkLine(canvasLayer, user, userAngle, hasAngle);
+
+                // 记录下一个用户的开始角度;
+                startAngle += hasAngle;
             });
         }
+
+        function getUsbUserPercent(user) {
+            if (user.subUser && user.subUser.length > 6) {
+                return 6
+            }
+            return user.subUser.length || 1
+        }
+
         canvasLayer.push(UserLinkLine);
     }
 
@@ -151,7 +175,7 @@ export default class FamilyMap {
         let _this = this;
         let bgStage = new Stage(this.config.r * 2, this.config.r * 2);
         let userAvatarLayer = new Layer(bgStage.getElement().getContext("2d"));
-        let lastOnAvatar = null;
+        let lastOnAvatar: Avatar | null = null;
         // 用户生成属性结构对象
         buildUserAvatar(this.RootUser);
 
@@ -161,7 +185,8 @@ export default class FamilyMap {
                 y: user.y,
                 r: 25,
                 fillStyle: '#57DDFF',
-                strokeStyle: '#2FB1E3'
+                strokeStyle: '#2FB1E3',
+                user
             }));
             if (user.subUser) user.subUser.forEach(_user => {
                 buildUserAvatar(_user);
@@ -192,14 +217,15 @@ export default class FamilyMap {
                     y: OnAvatar.y,
                     r: 30,
                     fillStyle: '#57DDFF',
-                    strokeStyle: '#2FB1E3'
+                    strokeStyle: '#2FB1E3',
+                    user: OnAvatar.user
                 }));
                 // 重新绘制头像
                 userAvatarLayer.ctx.clearRect(0, 0, _this.config.r * 2, _this.config.r * 2);
                 userAvatarLayer.draw();
             }
 
-            if(!OnAvatar && lastOnAvatar){
+            if (!OnAvatar && lastOnAvatar) {
                 // 去掉上次的焦点头像;
                 if (lastOnAvatar) {
                     userAvatarLayer.shapes.pop();
