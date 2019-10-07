@@ -26,10 +26,10 @@ export default class Avatar extends CanvasElementEntity {
     }
 
     draw() {
-        if (!this.ctx) throw new Error('画布实例为空');
+        if (!this.ctx) throw new Error("画布实例为空");
         this.ctx.beginPath();
         this.ctx.moveTo(this.x + this.r, this.y);
-        this.ctx.strokeStyle = '#777';
+        this.ctx.strokeStyle = "#777";
         CanvasHelper.drawDashRound(this.ctx, this.x, this.y, this.r);
         this.ctx.closePath();
         this.ctx.beginPath();

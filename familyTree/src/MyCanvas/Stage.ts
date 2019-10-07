@@ -10,10 +10,10 @@ export default class Stage {
     Layers: Layer[] = [];
 
     constructor(w, h) {
-        this.canvasElement = document.createElement('canvas');
-        this.canvasElement.setAttribute('width', w);
-        this.canvasElement.setAttribute('height', h);
-        this.canvasElement.setAttribute('class', 'canvasPosition');
+        this.canvasElement = document.createElement("canvas");
+        this.canvasElement.setAttribute("width", w);
+        this.canvasElement.setAttribute("height", h);
+        this.canvasElement.setAttribute("class", "canvasPosition");
     }
 
     push(layer: Layer) {

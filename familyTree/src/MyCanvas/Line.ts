@@ -6,10 +6,11 @@
 import CanvasElementEntity, { ICanvasElementOption } from "@/MyCanvas/CanvasElementEntity";
 
 export interface ILineEntity {
-    from: { x: number, y: number }
-    to: { x: number, y: number }
+    from: { x: number, y: number };
+    to: { x: number, y: number };
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface ILineOption extends ICanvasElementOption {
 }
 
@@ -25,13 +26,15 @@ export default class Line extends CanvasElementEntity {
     }
 
     draw() {
-        console.log('draw');
-        if (!this.ctx) throw new Error('画布实例为空');
+        console.log("draw");
+        if (!this.ctx) {
+            throw new Error("画布实例为空");
+        }
         this.ctx.beginPath();
-        this.lines.forEach(line => {
+        this.lines.forEach((line) => {
             this.ctx.moveTo(line.from.x, line.from.y);
             this.ctx.lineTo(line.to.x, line.to.y);
-        })
+        });
         this.ctx.closePath();
         this.drawStyle();
     }

@@ -25,8 +25,10 @@ export default class Circle extends CanvasElementEntity {
     }
 
     draw() {
-        console.log('draw');
-        if (!this.ctx) throw new Error('画布实例为空');
+        console.log("draw");
+        if (!this.ctx) {
+            throw new Error("画布实例为空");
+        }
         this.ctx.beginPath();
         this.ctx.moveTo(this.x + this.r, this.y);
         this.ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);

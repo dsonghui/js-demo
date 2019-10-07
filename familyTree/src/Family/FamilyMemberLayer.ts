@@ -26,12 +26,13 @@ export class FamilyMemberPosition extends UserEntity {
         this.x = x || 0;
         this.y = y || 0;
         if (this.sub && this.sub.length > 0) {
-            this.sub.forEach(user => {
+            // tslint:disable-next-line:no-shadowed-variable
+            this.sub.forEach((user) => {
                 if (hasUser.indexOf(user.uid) === -1) {
                     hasUser.push(user.uid);
                     this.subUser.push(new FamilyMemberPosition(user, this, layer + 1));
                 }
-            })
+            });
         }
     }
 }

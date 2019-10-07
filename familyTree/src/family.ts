@@ -14,15 +14,14 @@ import UserTree from "@/userTree";
 import Avatar from "@/MyCanvas/Avatar";
 
 interface IConfig {
-    r: number,
-    layerNum: number,
+    r: number;
+    layerNum: number;
 }
 
 const defaultConfig = {
     r: 400,
-    layerNum: 5
+    layerNum: 5,
 };
-
 
 export default class FamilyMap {
     // canvas 对象
@@ -31,8 +30,9 @@ export default class FamilyMap {
     store: any;
     config: IConfig;
     MemberLayer: FamilyMemberLayer[] = [];
-    Users: UserEntity = <any>UserTree;
+    Users: UserEntity = UserTree as any;
     RootUser: FamilyMemberPosition | null = null;
+
     constructor(wrap, store, config?) {
         this.wrap = wrap;
         this.store = store;
@@ -41,7 +41,7 @@ export default class FamilyMap {
         this.MemberLayer = new Array(this.config.layerNum)
             .fill(null)
             .map((v, index) => new FamilyMemberLayer(index + 1, radiusStep * (index + 1)));
-        window['FamilyMap'] = this;
+        window.FamilyMap = this;
         console.log(this);
     }
 
@@ -49,14 +49,16 @@ export default class FamilyMap {
     get CenterXy() {
         return {
             x: this.config.r,
-            y: this.config.r
-        }
+            y: this.config.r,
+        };
     }
 
     __getMemberLayer(layerNum) {
-        let l = this.MemberLayer.find(l => l.layerNum === layerNum);
-        if (l) return l;
-        throw new Error('没有找到对应的层:' + layerNum);
+        let l = this.MemberLayer.find((l) => l.layerNum === layerNum);
+        if (l) {
+            return l;
+        }
+        throw new Error("没有找到对应的层:" + layerNum);
     }
 
     build() {
@@ -64,7 +66,7 @@ export default class FamilyMap {
         this.buildUserLinkLine();
         this.buildUserAvatar();
 
-        //console.log(UserTree);
+        // console.log(UserTree);
 
         // this.buildZuoBiao();
 
@@ -79,7 +81,7 @@ export default class FamilyMap {
     buildBackGroupCircle() {
         let bgStage = new Stage(this.config.r * 2, this.config.r * 2);
         let backgroupLayer = new Layer(bgStage.getElement().getContext("2d"));
-        let color = Color('#f9f9f9');
+        let color = Color("#f9f9f9");
         this.MemberLayer.forEach((layer, index) => {
             backgroupLayer.unshift(new Circle({
                 x: this.CenterXy.x,
@@ -87,10 +89,10 @@ export default class FamilyMap {
                 r: layer.radius,
                 isFill: true,
                 isStroke: true,
-                fillStyle: index === 0 ? '#57DDFF' : color.darken(0.02 * (this.config.layerNum - index - 1)).rgb().toString(),
-                strokeStyle: index === 0 ? '#2FB1E3' : '#D8D8D8'
+                fillStyle: index === 0 ? "#57DDFF" : color.darken(0.02 * (this.config.layerNum - index - 1)).rgb().toString(),
+                strokeStyle: index === 0 ? "#2FB1E3" : "#D8D8D8",
             }));
-        })
+        });
 
         backgroupLayer.draw();
 
@@ -103,26 +105,30 @@ export default class FamilyMap {
         let userLinkLineLayer = new Layer(bgStage.getElement().getContext("2d"));
         // 用户生成属性结构对象
         this.RootUser = new FamilyMemberPosition(this.Users, null, 0, this.CenterXy.x, this.CenterXy.y);
-        this.__buildLayerLinkLine(userLinkLineLayer, this.RootUser, 0, 360)
+        this.__buildLayerLinkLine(userLinkLineLayer, this.RootUser, 0, 360);
         userLinkLineLayer.draw();
         this.wrap.appendChild(bgStage.getElement());
     }
 
     // 根据父级和子级数量分配位置
     __buildLayerLinkLine(canvasLayer, parentUser: FamilyMemberPosition, parentAngle, maxAngle) {
-        if (!parentUser.subUser || parentUser.subUser.length === 0) return;
+        if (!parentUser.subUser || parentUser.subUser.length === 0) {
+            return;
+        }
         let layerNum = parentUser.layer + 1;
         let layer = this.__getMemberLayer(layerNum);
         let UserLinkLine = new Line({
             isStroke: true,
-            strokeStyle: layerNum === 1 ? '#fff' : '#D8D8D8'
+            strokeStyle: layerNum === 1 ? "#fff" : "#D8D8D8",
         });
         let userNumber = parentUser.subUser.length;
         if (userNumber > 0) {
             let stepAngle = maxAngle / userNumber;
             parentUser.subUser.forEach((user, index) => {
                 let startAngle = parentAngle - (maxAngle / 2) + (stepAngle / 2);
-                if (startAngle < 0) startAngle = 360 + startAngle;
+                if (startAngle < 0) {
+                    startAngle = 360 + startAngle;
+                }
                 let userAngle = startAngle + (stepAngle * index);
                 // console.log('startAngle:' + startAngle);
                 // console.log('userAngle:' + userAngle);
@@ -139,7 +145,7 @@ export default class FamilyMap {
                     to: {
                         x: user.x,
                         y: user.y,
-                    }
+                    },
                 });
                 this.__buildLayerLinkLine(canvasLayer, user, userAngle, stepAngle);
             });
@@ -148,6 +154,7 @@ export default class FamilyMap {
     }
 
     buildUserAvatar() {
+        // tslint:disable-next-line:variable-name
         let _this = this;
         let bgStage = new Stage(this.config.r * 2, this.config.r * 2);
         let userAvatarLayer = new Layer(bgStage.getElement().getContext("2d"));
@@ -160,17 +167,19 @@ export default class FamilyMap {
                 x: user.x,
                 y: user.y,
                 r: 25,
-                fillStyle: '#57DDFF',
-                strokeStyle: '#2FB1E3'
+                fillStyle: "#57DDFF",
+                strokeStyle: "#2FB1E3",
             }));
-            if (user.subUser) user.subUser.forEach(_user => {
-                buildUserAvatar(_user);
-            })
+            if (user.subUser) {
+                user.subUser.forEach((userItem) => {
+                    buildUserAvatar(userItem);
+                });
+            }
         }
 
         userAvatarLayer.draw();
         this.wrap.appendChild(bgStage.getElement());
-        bgStage.getElement().addEventListener('mousemove', function (e) {
+        bgStage.getElement().addEventListener("mousemove", (e) => {
             let mouseX = e.layerX;
             let mouseY = e.layerY;
             let OnAvatar: Avatar | null = null;
@@ -191,15 +200,15 @@ export default class FamilyMap {
                     x: OnAvatar.x,
                     y: OnAvatar.y,
                     r: 30,
-                    fillStyle: '#57DDFF',
-                    strokeStyle: '#2FB1E3'
+                    fillStyle: "#57DDFF",
+                    strokeStyle: "#2FB1E3",
                 }));
                 // 重新绘制头像
                 userAvatarLayer.ctx.clearRect(0, 0, _this.config.r * 2, _this.config.r * 2);
                 userAvatarLayer.draw();
             }
 
-            if(!OnAvatar && lastOnAvatar){
+            if (!OnAvatar && lastOnAvatar) {
                 // 去掉上次的焦点头像;
                 if (lastOnAvatar) {
                     userAvatarLayer.shapes.pop();
@@ -210,13 +219,12 @@ export default class FamilyMap {
                 userAvatarLayer.draw();
             }
 
-        })
+        });
     }
-
 
     buildZuoBiao() {
         let bgStage = new Stage(this.config.r * 2, this.config.r * 2);
-        let ctx: CanvasRenderingContext2D = <any>bgStage.getElement().getContext("2d");
+        let ctx: CanvasRenderingContext2D = bgStage.getElement().getContext("2d") as any;
         ctx.beginPath();
         ctx.moveTo(this.CenterXy.x, this.CenterXy.y);
         ctx.lineTo(this.CenterXy.x + this.config.r, this.CenterXy.y);
@@ -230,6 +238,5 @@ export default class FamilyMap {
         ctx.stroke();
         this.wrap.appendChild(bgStage.getElement());
     }
-
 
 }

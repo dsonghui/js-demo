@@ -26,17 +26,20 @@ export default class CanvasElementEntity {
     isStroke: boolean = false;
     fillStyle?: string;
     strokeStyle?: string;
+
     constructor(option) {
         option = option || {};
         this.isFill = option.isFill || false;
         this.isStroke = option.isStroke || false;
-        this.fillStyle = option.fillStyle || '';
-        this.strokeStyle = option.strokeStyle || '';
+        this.fillStyle = option.fillStyle || "";
+        this.strokeStyle = option.strokeStyle || "";
     }
+
     setCtx(ctx) {
         this.ctx = ctx;
         return true;
     }
+
     draw() {
 
     }
@@ -45,7 +48,9 @@ export default class CanvasElementEntity {
      * 设置图像样式
      */
     drawStyle() {
-        if (!this.ctx) throw new Error('画布实例为空');
+        if (!this.ctx) {
+            throw new Error("画布实例为空");
+        }
         if (this.isFill) {
             if (this.fillStyle) {
                 this.ctx.fillStyle = this.fillStyle;
