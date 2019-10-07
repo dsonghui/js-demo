@@ -1,8 +1,6 @@
 {
   "extends": [
-    "tslint:recommended",
-    "tslint-react",
-    "tslint-config-prettier"
+    "tslint:recommended"
   ],
   "linterOptions": {
     "exclude": [
