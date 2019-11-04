@@ -1,0 +1,25 @@
+{
+    "name": "node-demo",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "test": "jctest -v"
+    },
+    "bin": {
+        "jctest": "dist/index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@types/node": "^10.12.10",
+        "axios": "^0.18.0",
+        "commander": "^2.20.0",
+        "lodash": "^4.17.11",
+        "mockjs": "^1.0.1-beta3"
+    },
+    "devDependencies": {
+        "@types/lodash": "^4.14.126",
+        "@types/mockjs": "^1.0.2"
+    }
+}
