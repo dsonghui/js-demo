@@ -1,6 +1,6 @@
 export function makeArr(l = 100) {
     return Array(l).fill(0).map((index) => {
-        return Math.round(Math.random() * l * 10);
+        return Math.round(Math.random() * l * 100);
     });
 }
 
